@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package search.v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/0x726f6f6b6965/my-blog/protos/search/v1;v1";
+
+
+service SearchService {
+    // Search: the function runs when a user
+    // queries the system to find some content.
+    rpc Search (SearchRequest) returns (SearchResponse);
+
+    // AddIndex: add an index to the storage for searching.
+    rpc AddIndex (AddIndexRequest) returns (google.protobuf.Empty);
+
+    rpc AutoComplete (AutoCompleteReuqest) returns (AutoCompleteResponse);
+}
+
+message SearchRequest {
+    string query = 1;
+}
+
+message SearchResponse {
+    repeated string ids = 1;
+}
+
+message AddIndexRequest {
+    string id = 1;
+    string index = 2;
+}
+
+message AutoCompleteReuqest {
+    string words = 1;
+}
+
+message AutoCompleteResponse {
+    repeated string match = 1;
+}
