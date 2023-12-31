@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"slices"
+	"sync"
 
 	"github.com/0x726f6f6b6965/my-blog/lib/checker"
 	"github.com/0x726f6f6b6965/my-blog/lib/grpc"
@@ -15,7 +16,7 @@ import (
 type searchService struct {
 	pbSearch.UnimplementedSearchServiceServer
 	cache *utils.WordDictionary
-	index map[string][]string
+	index sync.Map
 }
 
 // AddIndex implements v1.SearchServiceServer.
@@ -26,10 +27,15 @@ func (s *searchService) AddIndex(ctx context.Context, req *pbSearch.AddIndexRequ
 	s.cache.InsertWord(req.GetIndex())
 	// indexer
 	for _, token := range utils.GetTokens(req.GetIndex()) {
-		if ids, ok := s.index[token]; ok && slices.Contains(ids, req.Id) {
-			continue
+		var inedxArray []string
+		if ids, ok := s.index.Load(token); ok {
+			if slices.Contains(ids.([]string), req.Id) {
+				continue
+			}
+			inedxArray = ids.([]string)
 		}
-		s.index[token] = append(s.index[token], req.Id)
+		inedxArray = append(inedxArray, req.Id)
+		s.index.Store(token, inedxArray)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -42,11 +48,11 @@ func (s *searchService) Search(ctx context.Context, req *pbSearch.SearchRequest)
 	// indexer
 	var result []string
 	for _, token := range utils.GetTokens(req.GetQuery()) {
-		if ids, ok := s.index[token]; ok {
+		if ids, ok := s.index.Load(token); ok {
 			if result == nil {
-				result = ids
+				result = ids.([]string)
 			} else {
-				result = helper.Intersect(result, ids)
+				result = helper.Intersect(result, ids.([]string))
 			}
 		} else {
 			// token doesn't exist
@@ -67,6 +73,5 @@ func (s *searchService) AutoComplete(ctx context.Context, req *pbSearch.AutoComp
 func NewSearchService() pbSearch.SearchServiceServer {
 	return &searchService{
 		cache: utils.NewWordDictionary(),
-		index: map[string][]string{},
 	}
 }

@@ -1,6 +1,9 @@
 package utils
 
-import "sort"
+import (
+	"sort"
+	"sync"
+)
 
 type Node struct {
 	children map[rune]*Node
@@ -28,6 +31,7 @@ func (node *Node) Update(n *Node) {
 
 type WordDictionary struct {
 	root *Node
+	sync.RWMutex
 }
 
 func NewWordDictionary() *WordDictionary {
@@ -36,6 +40,8 @@ func NewWordDictionary() *WordDictionary {
 }
 
 func (wordDict *WordDictionary) InsertWord(word string) {
+	wordDict.RLock()
+	defer wordDict.RUnlock()
 	node := wordDict.root
 	var visited []*Node
 	for _, c := range word {
