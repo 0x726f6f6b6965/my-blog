@@ -1,0 +1,15 @@
+output              = "./pkg/repository"
+wipe                = true
+add-global-variants = true
+no-tests            = false
+pkgname             = "repository"
+
+[psql]
+  host   = "localhost"
+  port   = 5432
+  dbname = "postgres"
+  user   = "postgres"
+  pass   = "docker"
+  schema = "public"
+  sslmode = "disable"
+  
