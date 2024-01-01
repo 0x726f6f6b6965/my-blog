@@ -2,14 +2,19 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"slices"
 	"sync"
 
+	"github.com/0x726f6f6b6965/my-blog/db/pkg/repository"
 	"github.com/0x726f6f6b6965/my-blog/lib/checker"
 	"github.com/0x726f6f6b6965/my-blog/lib/grpc"
 	pbSearch "github.com/0x726f6f6b6965/my-blog/protos/search/v1"
 	"github.com/0x726f6f6b6965/my-blog/search-service/interanl/helper"
 	"github.com/0x726f6f6b6965/my-blog/search-service/interanl/utils"
+	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -18,6 +23,8 @@ type searchService struct {
 	cache *utils.WordDictionary
 	index sync.Map
 }
+
+var LoadStorageFunc func()
 
 // AddIndex implements v1.SearchServiceServer.
 func (s *searchService) AddIndex(ctx context.Context, req *pbSearch.AddIndexRequest) (*emptypb.Empty, error) {
@@ -73,5 +80,33 @@ func (s *searchService) AutoComplete(ctx context.Context, req *pbSearch.AutoComp
 func NewSearchService() pbSearch.SearchServiceServer {
 	return &searchService{
 		cache: utils.NewWordDictionary(),
+	}
+}
+
+func SetLoadStorageFunc(size int, db *sql.DB,
+	logger *zap.Logger,
+	addFunc func(context.Context, *pbSearch.AddIndexRequest) (*emptypb.Empty, error)) {
+	LoadStorageFunc = func() {
+		var (
+			prev = 0
+			ctx  context.Context
+		)
+		boil.SetDB(db)
+		for {
+			mod := []qm.QueryMod{
+				qm.Select(repository.TBlogColumns.ID, repository.TBlogColumns.Title),
+				qm.Offset(prev), qm.Limit(size)}
+			infos, err := repository.TBlogs(mod...).AllG(ctx)
+			if err != nil {
+				logger.Error("retrieve blogs error", zap.Error(err))
+			}
+			if len(infos) <= 0 {
+				break
+			}
+			for _, info := range infos {
+				addFunc(ctx, &pbSearch.AddIndexRequest{Id: info.ID, Index: info.Title})
+			}
+			prev += size
+		}
 	}
 }

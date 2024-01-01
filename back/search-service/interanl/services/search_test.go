@@ -6,9 +6,14 @@ import (
 	"os"
 	"testing"
 
+	"github.com/0x726f6f6b6965/my-blog/db/pkg/repository"
+	"github.com/0x726f6f6b6965/my-blog/lib/config"
 	pbSearch "github.com/0x726f6f6b6965/my-blog/protos/search/v1"
+	"github.com/0x726f6f6b6965/my-blog/search-service/interanl/client"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/volatiletech/sqlboiler/v4/boil"
+	"go.uber.org/zap"
 )
 
 var (
@@ -94,4 +99,36 @@ func TestAutoCompleteMulti(t *testing.T) {
 	assert.Contains(t, result.Match, add2.Index)
 	assert.Contains(t, result.Match, add3.Index)
 	assert.Equal(t, len(result.Match), 2)
+}
+
+func TestRealDBLoad(t *testing.T) {
+	ctx := context.Background()
+	db, cleanup, _ := client.NewPostgres(&config.DBConfig{
+		Host:     "localhost",
+		Port:     5432,
+		User:     "postgres",
+		Password: "docker",
+		DBName:   "postgres",
+		SSLmode:  "disable",
+	})
+	defer cleanup()
+	logger, _ := zap.NewDevelopment()
+	SetLoadStorageFunc(10, db, logger, search.AddIndex)
+	boil.SetDB(db)
+	testUser := repository.TUser{Username: "test-user",
+		Email: "abc@gmail.com", Salt: uuid.NewString(), Password: uuid.NewString()}
+	_ = testUser.InsertG(ctx, boil.Infer())
+	defer testUser.DeleteG(ctx)
+	testBlog := repository.TBlog{
+		Title:   "Test blog title",
+		Content: "Test content",
+		Author:  testUser.Email,
+	}
+	_ = testBlog.InsertG(ctx, boil.Infer())
+	defer testBlog.DeleteG(ctx)
+	LoadStorageFunc()
+	resp, err := search.Search(ctx, &pbSearch.SearchRequest{Query: testBlog.Title})
+	assert.Nil(t, err)
+	assert.Contains(t, resp.Ids, testBlog.ID)
+
 }
