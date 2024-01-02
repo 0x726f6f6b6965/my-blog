@@ -1,8 +1,8 @@
 package helper
 
-func Intersect(a []string, b []string) []string {
-	set := make([]string, 0)
-	hash := make(map[string]bool)
+func Intersect[T string | int](a []T, b []T) []T {
+	set := make([]T, 0)
+	hash := make(map[T]bool)
 	for _, val := range a {
 		hash[val] = true
 	}
