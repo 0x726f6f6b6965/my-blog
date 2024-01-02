@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "github.com/0x726f6f6b6965/my-blog/protos/user/v1;v1";
+
+
+service UserService {
+    // CreateUser: create a new user account.
+    rpc CreateUser (CreateUserRequest) returns (Token);
+
+    // GetToken: get a validate token based on user information.
+    rpc GetToken (GetTokenRequest) returns (Token);
+
+    // UpdateToken: update a used verified token to extend its expiration.
+    rpc UpdateToken (UpdateTokenRequest) returns (Token);
+}
+
+message CreateUserRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message GetTokenRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message UpdateTokenRequest {
+    string email = 1;
+}
+
+message Token {
+    string token = 1;
+}
