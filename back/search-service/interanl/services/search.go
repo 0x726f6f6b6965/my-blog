@@ -70,7 +70,7 @@ func (s *searchService) Search(ctx context.Context, req *pbSearch.SearchRequest)
 	return &pbSearch.SearchResponse{Ids: result}, nil
 }
 
-func (s *searchService) AutoComplete(ctx context.Context, req *pbSearch.AutoCompleteReuqest) (*pbSearch.AutoCompleteResponse, error) {
+func (s *searchService) AutoComplete(ctx context.Context, req *pbSearch.AutoCompleteRequest) (*pbSearch.AutoCompleteResponse, error) {
 	if checker.IsEmpty(req.Words) {
 		return nil, grpc.BadRequestErr("words is required", "words", "words is empty")
 	}

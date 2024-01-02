@@ -15,7 +15,8 @@ service SearchService {
     // AddIndex: add an index to the storage for searching.
     rpc AddIndex (AddIndexRequest) returns (google.protobuf.Empty);
 
-    rpc AutoComplete (AutoCompleteReuqest) returns (AutoCompleteResponse);
+    // AutoComplete: find relate content based on the request word.
+    rpc AutoComplete (AutoCompleteRequest) returns (AutoCompleteResponse);
 }
 
 message SearchRequest {
@@ -31,7 +32,7 @@ message AddIndexRequest {
     string index = 2;
 }
 
-message AutoCompleteReuqest {
+message AutoCompleteRequest {
     string words = 1;
 }
 

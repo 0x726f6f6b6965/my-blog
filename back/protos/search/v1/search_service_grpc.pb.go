@@ -34,7 +34,8 @@ type SearchServiceClient interface {
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
 	// AddIndex: add an index to the storage for searching.
 	AddIndex(ctx context.Context, in *AddIndexRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	AutoComplete(ctx context.Context, in *AutoCompleteReuqest, opts ...grpc.CallOption) (*AutoCompleteResponse, error)
+	// AutoComplete: find relate content based on the request word.
+	AutoComplete(ctx context.Context, in *AutoCompleteRequest, opts ...grpc.CallOption) (*AutoCompleteResponse, error)
 }
 
 type searchServiceClient struct {
@@ -63,7 +64,7 @@ func (c *searchServiceClient) AddIndex(ctx context.Context, in *AddIndexRequest,
 	return out, nil
 }
 
-func (c *searchServiceClient) AutoComplete(ctx context.Context, in *AutoCompleteReuqest, opts ...grpc.CallOption) (*AutoCompleteResponse, error) {
+func (c *searchServiceClient) AutoComplete(ctx context.Context, in *AutoCompleteRequest, opts ...grpc.CallOption) (*AutoCompleteResponse, error) {
 	out := new(AutoCompleteResponse)
 	err := c.cc.Invoke(ctx, SearchService_AutoComplete_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -81,7 +82,8 @@ type SearchServiceServer interface {
 	Search(context.Context, *SearchRequest) (*SearchResponse, error)
 	// AddIndex: add an index to the storage for searching.
 	AddIndex(context.Context, *AddIndexRequest) (*emptypb.Empty, error)
-	AutoComplete(context.Context, *AutoCompleteReuqest) (*AutoCompleteResponse, error)
+	// AutoComplete: find relate content based on the request word.
+	AutoComplete(context.Context, *AutoCompleteRequest) (*AutoCompleteResponse, error)
 	mustEmbedUnimplementedSearchServiceServer()
 }
 
@@ -95,7 +97,7 @@ func (UnimplementedSearchServiceServer) Search(context.Context, *SearchRequest) 
 func (UnimplementedSearchServiceServer) AddIndex(context.Context, *AddIndexRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddIndex not implemented")
 }
-func (UnimplementedSearchServiceServer) AutoComplete(context.Context, *AutoCompleteReuqest) (*AutoCompleteResponse, error) {
+func (UnimplementedSearchServiceServer) AutoComplete(context.Context, *AutoCompleteRequest) (*AutoCompleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AutoComplete not implemented")
 }
 func (UnimplementedSearchServiceServer) mustEmbedUnimplementedSearchServiceServer() {}
@@ -148,7 +150,7 @@ func _SearchService_AddIndex_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _SearchService_AutoComplete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AutoCompleteReuqest)
+	in := new(AutoCompleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -160,7 +162,7 @@ func _SearchService_AutoComplete_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: SearchService_AutoComplete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServiceServer).AutoComplete(ctx, req.(*AutoCompleteReuqest))
+		return srv.(SearchServiceServer).AutoComplete(ctx, req.(*AutoCompleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

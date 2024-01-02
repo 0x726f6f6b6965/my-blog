@@ -170,7 +170,7 @@ func (x *AddIndexRequest) GetIndex() string {
 	return ""
 }
 
-type AutoCompleteReuqest struct {
+type AutoCompleteRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -178,8 +178,8 @@ type AutoCompleteReuqest struct {
 	Words string `protobuf:"bytes,1,opt,name=words,proto3" json:"words,omitempty"`
 }
 
-func (x *AutoCompleteReuqest) Reset() {
-	*x = AutoCompleteReuqest{}
+func (x *AutoCompleteRequest) Reset() {
+	*x = AutoCompleteRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_search_v1_search_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -187,13 +187,13 @@ func (x *AutoCompleteReuqest) Reset() {
 	}
 }
 
-func (x *AutoCompleteReuqest) String() string {
+func (x *AutoCompleteRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AutoCompleteReuqest) ProtoMessage() {}
+func (*AutoCompleteRequest) ProtoMessage() {}
 
-func (x *AutoCompleteReuqest) ProtoReflect() protoreflect.Message {
+func (x *AutoCompleteRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_search_v1_search_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -205,12 +205,12 @@ func (x *AutoCompleteReuqest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AutoCompleteReuqest.ProtoReflect.Descriptor instead.
-func (*AutoCompleteReuqest) Descriptor() ([]byte, []int) {
+// Deprecated: Use AutoCompleteRequest.ProtoReflect.Descriptor instead.
+func (*AutoCompleteRequest) Descriptor() ([]byte, []int) {
 	return file_search_v1_search_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AutoCompleteReuqest) GetWords() string {
+func (x *AutoCompleteRequest) GetWords() string {
 	if x != nil {
 		return x.Words
 	}
@@ -280,7 +280,7 @@ var file_search_v1_search_service_proto_rawDesc = []byte{
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18,
 	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x22, 0x2b, 0x0a, 0x13,
-	0x41, 0x75, 0x74, 0x6f, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x75, 0x71,
+	0x41, 0x75, 0x74, 0x6f, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x05, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x22, 0x2c, 0x0a, 0x14, 0x41, 0x75, 0x74,
 	0x6f, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
@@ -297,7 +297,7 @@ var file_search_v1_search_service_proto_rawDesc = []byte{
 	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x4f, 0x0a, 0x0c, 0x41, 0x75, 0x74, 0x6f,
 	0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x1e, 0x2e, 0x73, 0x65, 0x61, 0x72, 0x63,
 	0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x74, 0x6f, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74,
-	0x65, 0x52, 0x65, 0x75, 0x71, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x73, 0x65, 0x61, 0x72, 0x63,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x73, 0x65, 0x61, 0x72, 0x63,
 	0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x74, 0x6f, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74,
 	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x9f, 0x01, 0x0a, 0x0d, 0x63, 0x6f,
 	0x6d, 0x2e, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x2e, 0x76, 0x31, 0x42, 0x12, 0x53, 0x65, 0x61,
@@ -330,14 +330,14 @@ var file_search_v1_search_service_proto_goTypes = []interface{}{
 	(*SearchRequest)(nil),        // 0: search.v1.SearchRequest
 	(*SearchResponse)(nil),       // 1: search.v1.SearchResponse
 	(*AddIndexRequest)(nil),      // 2: search.v1.AddIndexRequest
-	(*AutoCompleteReuqest)(nil),  // 3: search.v1.AutoCompleteReuqest
+	(*AutoCompleteRequest)(nil),  // 3: search.v1.AutoCompleteRequest
 	(*AutoCompleteResponse)(nil), // 4: search.v1.AutoCompleteResponse
 	(*emptypb.Empty)(nil),        // 5: google.protobuf.Empty
 }
 var file_search_v1_search_service_proto_depIdxs = []int32{
 	0, // 0: search.v1.SearchService.Search:input_type -> search.v1.SearchRequest
 	2, // 1: search.v1.SearchService.AddIndex:input_type -> search.v1.AddIndexRequest
-	3, // 2: search.v1.SearchService.AutoComplete:input_type -> search.v1.AutoCompleteReuqest
+	3, // 2: search.v1.SearchService.AutoComplete:input_type -> search.v1.AutoCompleteRequest
 	1, // 3: search.v1.SearchService.Search:output_type -> search.v1.SearchResponse
 	5, // 4: search.v1.SearchService.AddIndex:output_type -> google.protobuf.Empty
 	4, // 5: search.v1.SearchService.AutoComplete:output_type -> search.v1.AutoCompleteResponse
@@ -391,7 +391,7 @@ func file_search_v1_search_service_proto_init() {
 			}
 		}
 		file_search_v1_search_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AutoCompleteReuqest); i {
+			switch v := v.(*AutoCompleteRequest); i {
 			case 0:
 				return &v.state
 			case 1:

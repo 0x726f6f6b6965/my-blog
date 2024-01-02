@@ -87,14 +87,14 @@ func TestSearchMultiResult(t *testing.T) {
 
 func TestAutoCompleteOne(t *testing.T) {
 	ctx := context.Background()
-	result, err := search.AutoComplete(ctx, &pbSearch.AutoCompleteReuqest{Words: "What's"})
+	result, err := search.AutoComplete(ctx, &pbSearch.AutoCompleteRequest{Words: "What's"})
 	assert.Nil(t, err)
 	assert.Contains(t, result.Match, add1.Index)
 	assert.Equal(t, len(result.Match), 1)
 }
 func TestAutoCompleteMulti(t *testing.T) {
 	ctx := context.Background()
-	result, err := search.AutoComplete(ctx, &pbSearch.AutoCompleteReuqest{Words: "I"})
+	result, err := search.AutoComplete(ctx, &pbSearch.AutoCompleteRequest{Words: "I"})
 	assert.Nil(t, err)
 	assert.Contains(t, result.Match, add2.Index)
 	assert.Contains(t, result.Match, add3.Index)
