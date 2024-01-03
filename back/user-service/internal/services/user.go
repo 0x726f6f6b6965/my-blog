@@ -21,9 +21,10 @@ import (
 
 type userService struct {
 	pbUser.UnimplementedUserServiceServer
-	expire time.Duration
-	rds    *redis.Client
-	db     *sql.DB
+	expire   time.Duration
+	rds      *redis.Client
+	db       *sql.DB
+	testSalt *utils.Salt
 }
 
 // CreateUser: create a new user account.
@@ -34,7 +35,7 @@ func (s *userService) CreateUser(ctx context.Context, req *pbUser.CreateUserRequ
 	if checker.IsEmpty(req.GetEmail()) {
 		return &pbUser.Token{}, grpc.BadRequestErr("email is required", "email", "email is empty")
 	}
-	if checker.ValidateEmail(req.GetEmail()) {
+	if !checker.ValidateEmail(req.GetEmail()) {
 		return &pbUser.Token{}, grpc.InvalidErr("email invalid", "email", "email invalid")
 	}
 	if checker.IsEmpty(req.GetPassword()) {
@@ -45,15 +46,17 @@ func (s *userService) CreateUser(ctx context.Context, req *pbUser.CreateUserRequ
 	if !checker.IsEmpty(token) {
 		return &pbUser.Token{}, grpc.InvalidErr("email invalid", "email", "email invalid")
 	}
-	exist, err := repository.TUsers(qm.Where(
-		fmt.Sprintf("%s = ?", repository.TUserColumns.Email), req.Email)).Exists(ctx, s.db)
-	if err != nil {
-		return &pbUser.Token{}, grpc.InternalErr("database error, try again later")
-	}
-	if exist {
+	_, err := repository.TUsers(qm.Select(repository.TUserColumns.Email), qm.Where(
+		fmt.Sprintf("%s = ?", repository.TUserColumns.Email), req.Email)).OneG(ctx)
+	if err == nil {
 		return &pbUser.Token{}, grpc.InvalidErr("email invalid", "email", "email invalid")
 	}
-	salt := utils.CreateNewSalt()
+	var salt utils.Salt
+	if s.testSalt == nil {
+		salt = utils.CreateNewSalt()
+	} else {
+		salt = *s.testSalt
+	}
 	pwd, err := salt.SaltInput(req.Password)
 	if err != nil {
 		return &pbUser.Token{}, grpc.InternalErr("salt error, try again later")
@@ -86,7 +89,7 @@ func (s *userService) GetToken(ctx context.Context, req *pbUser.GetTokenRequest)
 	if checker.IsEmpty(req.GetEmail()) {
 		return &pbUser.Token{}, grpc.BadRequestErr("email is required", "email", "email is empty")
 	}
-	if checker.ValidateEmail(req.GetEmail()) {
+	if !checker.ValidateEmail(req.GetEmail()) {
 		return &pbUser.Token{}, grpc.InvalidErr("email invalid", "email", "email invalid")
 	}
 	if checker.IsEmpty(req.GetPassword()) {
@@ -102,14 +105,14 @@ func (s *userService) GetToken(ctx context.Context, req *pbUser.GetTokenRequest)
 	}
 	info, err := repository.TUsers(mod...).OneG(ctx)
 	if err != nil {
-		return &pbUser.Token{}, nil
+		return &pbUser.Token{}, grpc.BadRequestErr("login fail", "some field", "login fail")
 	}
 	salt, err := utils.CreateSaltByString(info.Salt)
 	if err != nil {
-		return &pbUser.Token{}, nil
+		return &pbUser.Token{}, grpc.BadRequestErr("login fail", "some field", "login fail")
 	}
 	if pwd, _ := salt.SaltInput(req.Password); pwd != info.Password {
-		return &pbUser.Token{}, nil
+		return &pbUser.Token{}, grpc.BadRequestErr("login fail", "some field", "login fail")
 	}
 	secret, err := client.GetSecret(ctx, s.rds)
 	if err != nil {
@@ -129,7 +132,7 @@ func (s *userService) UpdateToken(ctx context.Context, req *pbUser.UpdateTokenRe
 	if checker.IsEmpty(req.GetEmail()) {
 		return &pbUser.Token{}, grpc.BadRequestErr("email is required", "email", "email is empty")
 	}
-	if checker.ValidateEmail(req.GetEmail()) {
+	if !checker.ValidateEmail(req.GetEmail()) {
 		return &pbUser.Token{}, grpc.InvalidErr("email invalid", "email", "email invalid")
 	}
 	token, err := client.GetToken(ctx, req.GetEmail(), s.rds)
@@ -153,9 +156,11 @@ func (s *userService) UpdateToken(ctx context.Context, req *pbUser.UpdateTokenRe
 }
 
 func NewUserService(expire time.Duration, db *sql.DB, rds *redis.Client) pbUser.UserServiceServer {
-	return &userService{
+	ser := &userService{
 		expire: expire,
 		db:     db,
 		rds:    rds,
 	}
+	boil.SetDB(ser.db)
+	return ser
 }

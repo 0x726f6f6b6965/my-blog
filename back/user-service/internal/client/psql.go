@@ -5,6 +5,7 @@ import (
 
 	"github.com/0x726f6f6b6965/my-blog/lib/config"
 	"github.com/0x726f6f6b6965/my-blog/user-service/internal/helper"
+	_ "github.com/lib/pq"
 )
 
 func NewPostgres(cfg *config.DBConfig) (db *sql.DB, cleanup func(), err error) {
