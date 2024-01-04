@@ -14,6 +14,7 @@ import (
 	pbBlog "github.com/0x726f6f6b6965/my-blog/protos/blog/v1"
 	pbSearch "github.com/0x726f6f6b6965/my-blog/protos/search/v1"
 	pbUser "github.com/0x726f6f6b6965/my-blog/protos/user/v1"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
@@ -22,6 +23,7 @@ func (r *mutationResolver) Register(ctx context.Context, input model.NewUser) (s
 	resp, err := r.UserService.CreateUser(ctx, &pbUser.CreateUserRequest{
 		Username: input.Username, Email: input.Email, Password: input.Password})
 	if err != nil {
+		r.Log.Error("Register failed", zap.Error(err))
 		return "", errors.New("registration failed")
 	}
 	return resp.GetToken(), nil
@@ -32,6 +34,7 @@ func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (s
 	resp, err := r.UserService.GetToken(ctx, &pbUser.GetTokenRequest{
 		Email: input.Email, Password: input.Password})
 	if err != nil {
+		r.Log.Error("Login failed", zap.Error(err))
 		return "", errors.New("login failed, invalid email or password")
 	}
 	return resp.GetToken(), nil
@@ -47,6 +50,7 @@ func (r *mutationResolver) NewBlog(ctx context.Context, input model.NewBlog) (*m
 	resp, err := r.BlogService.CreateBlog(ctx, &pbBlog.CreateBlogRequest{
 		Title: input.Title, Content: input.Content, Author: email})
 	if err != nil {
+		r.Log.Error("NewBlog failed", zap.Error(err))
 		return &model.Blog{}, errors.New("access denied")
 	}
 	blog := &model.Blog{
@@ -88,6 +92,7 @@ func (r *mutationResolver) EditBlog(ctx context.Context, input model.EditBlog) (
 
 	blog, err := r.BlogService.EditBlog(ctx, req)
 	if err != nil {
+		r.Log.Error("EditBlog failed", zap.Error(err))
 		return &model.Blog{}, errors.New("access denied")
 	}
 	resp := &model.Blog{
@@ -112,6 +117,7 @@ func (r *mutationResolver) DeleteBlog(ctx context.Context, input model.DeleteBlo
 	}
 	_, err := r.BlogService.DeleteBlog(ctx, &pbBlog.DeleteBlogRequest{Id: input.BlogID, Author: email})
 	if err != nil {
+		r.Log.Error("DeleteBlog failed", zap.Error(err))
 		return false, errors.New("access denied")
 	}
 	return true, nil
@@ -125,6 +131,7 @@ func (r *queryResolver) Blogs(ctx context.Context, input model.GetBlogs) (*model
 		Authors:   input.Authors,
 	})
 	if err != nil {
+		r.Log.Error("Blogs failed", zap.Error(err))
 		return &model.ListBlog{}, errors.New("access denied")
 	}
 	result := &model.ListBlog{
@@ -149,6 +156,7 @@ func (r *queryResolver) Blogs(ctx context.Context, input model.GetBlogs) (*model
 func (r *queryResolver) Blog(ctx context.Context, id string) (*model.Blog, error) {
 	resp, err := r.BlogService.GetBlog(ctx, &pbBlog.GetBlogRequest{Id: id})
 	if err != nil {
+		r.Log.Error("Blog failed", zap.Error(err))
 		return &model.Blog{}, errors.New("access denied")
 	}
 	blog := &model.Blog{
@@ -168,6 +176,7 @@ func (r *queryResolver) Blog(ctx context.Context, id string) (*model.Blog, error
 func (r *queryResolver) Title(ctx context.Context, input string) ([]string, error) {
 	resp, err := r.SearchService.AutoComplete(ctx, &pbSearch.AutoCompleteRequest{Words: input})
 	if err != nil {
+		r.Log.Error("Title failed", zap.Error(err))
 		return []string{}, errors.New("access denied")
 	}
 	return resp.Match, nil
@@ -177,6 +186,7 @@ func (r *queryResolver) Title(ctx context.Context, input string) ([]string, erro
 func (r *queryResolver) BlogID(ctx context.Context, input string) ([]string, error) {
 	resp, err := r.SearchService.Search(ctx, &pbSearch.SearchRequest{Query: input})
 	if err != nil {
+		r.Log.Error("BlogID failed", zap.Error(err))
 		return []string{}, errors.New("access denied")
 	}
 	return resp.GetIds(), nil

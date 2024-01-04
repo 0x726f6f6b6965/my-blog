@@ -46,26 +46,27 @@ func main() {
 		return
 	}
 	defer cleanup()
-	handler, err := NewGraphQLHandler(&cfg, zaplog)
+	handler, rdsClean, err := NewGraphQLHandler(&cfg, zaplog)
+	defer rdsClean()
 	if err != nil {
 		return
 	}
+
 	port := cfg.Rest.Port
 	if port == 0 {
 		port = defaultPort
 	}
 
-	log.Printf("connect to http://%s:%d/ for GraphQL playground", cfg.Rest.Host, port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", cfg.Rest.Host, port), handler))
+	log.Printf("connect to http://localhost:%d/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), handler))
 }
 
 // NewGraphQLHandler returns handler for GraphQL application
-func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, error) {
+func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, func() error, error) {
 	// create a new router
 	var router *chi.Mux = chi.NewRouter()
 
 	rds := client.InitRedisClient(&cfg.Redis)
-	defer rds.Close()
 
 	connUser, err := client.NewGrpcConn(
 		context.Background(),
@@ -73,7 +74,7 @@ func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, error)
 		cfg.Clients.User.ConnectionTimeout)
 	if err != nil {
 		zaplog.Error("connect user service error", zap.Error(err))
-		return nil, errors.New("connect user service error")
+		return nil, rds.Close, errors.New("connect user service error")
 	}
 
 	connBlog, err := client.NewGrpcConn(
@@ -82,7 +83,7 @@ func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, error)
 		cfg.Clients.Blog.ConnectionTimeout)
 	if err != nil {
 		zaplog.Error("connect blog service error", zap.Error(err))
-		return nil, errors.New("connect blog service error")
+		return nil, rds.Close, errors.New("connect blog service error")
 	}
 
 	connSearch, err := client.NewGrpcConn(
@@ -91,7 +92,7 @@ func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, error)
 		cfg.Clients.Search.ConnectionTimeout)
 	if err != nil {
 		zaplog.Error("connect search service error", zap.Error(err))
-		return nil, errors.New("connect search service error")
+		return nil, rds.Close, errors.New("connect search service error")
 	}
 
 	resolver := &graph.Resolver{
@@ -102,7 +103,7 @@ func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, error)
 	}
 
 	// use the middleware component
-	router.Use(middleware.NewMiddleware(rds))
+	router.Use(middleware.NewMiddleware(rds, zaplog))
 
 	// create a GraphQL server
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
@@ -112,5 +113,5 @@ func NewGraphQLHandler(cfg *config.Config, zaplog *zap.Logger) (*chi.Mux, error)
 	router.Handle("/query", srv)
 
 	// return the handler
-	return router, nil
+	return router, rds.Close, nil
 }

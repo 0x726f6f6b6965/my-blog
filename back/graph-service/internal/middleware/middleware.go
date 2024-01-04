@@ -8,6 +8,7 @@ import (
 	"github.com/0x726f6f6b6965/my-blog/graph-service/internal/utils"
 	"github.com/0x726f6f6b6965/my-blog/lib/checker"
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 // create a context key
@@ -19,7 +20,7 @@ type contextKey struct {
 var userCtxKey = &contextKey{"user"}
 
 // NewMiddleware returns a middleware for authentication
-func NewMiddleware(rds *redis.Client) func(http.Handler) http.Handler {
+func NewMiddleware(rds *redis.Client, logger *zap.Logger) func(http.Handler) http.Handler {
 	// return handler that acts as a middleware
 	return func(next http.Handler) http.Handler {
 		// return handler function
@@ -33,13 +34,15 @@ func NewMiddleware(rds *redis.Client) func(http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
+			secret, _ := client.GetSecret(context.Background(), rds)
 
 			// get the JWT token from the header
-			tokenData, err := utils.CheckToken(r)
+			tokenData, err := utils.CheckToken(r, secret)
 
 			// if the JWT token is invalid, return an error
 			// the next request cannot be proceed
 			if err != nil {
+				logger.Error("check token failed", zap.Error(err))
 				http.Error(w, "invalid token", http.StatusForbidden)
 				return
 			}

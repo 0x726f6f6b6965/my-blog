@@ -2,7 +2,6 @@ package utils
 
 import (
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -16,9 +15,9 @@ type TokenMetadata struct {
 }
 
 // ExtractTokenMetadata extracts JWT token metadata
-func ExtractTokenMetadata(r *http.Request) (*TokenMetadata, error) {
+func ExtractTokenMetadata(r *http.Request, secret string) (*TokenMetadata, error) {
 	// verify the JWT token
-	token, err := verifyToken(r)
+	token, err := verifyToken(r, secret)
 
 	// if verification is failed, return an error
 	if err != nil {
@@ -36,7 +35,7 @@ func ExtractTokenMetadata(r *http.Request) (*TokenMetadata, error) {
 		// set token expiration
 		expires := int64(claims["exp"].(float64))
 		// set user ID for the token
-		userId := claims["userId"].(string)
+		userId := claims["user"].(string)
 
 		// return the JWT token metadata
 		return &TokenMetadata{
@@ -50,12 +49,12 @@ func ExtractTokenMetadata(r *http.Request) (*TokenMetadata, error) {
 }
 
 // CheckToken checks JWT token
-func CheckToken(r *http.Request) (*TokenMetadata, error) {
+func CheckToken(r *http.Request, secret string) (*TokenMetadata, error) {
 	// get the current time
 	var now int64 = time.Now().Unix()
 
 	// extract the JWT token metadata
-	claims, err := ExtractTokenMetadata(r)
+	claims, err := ExtractTokenMetadata(r, secret)
 	// if extraction is failed, return an error
 	if err != nil {
 		return nil, err
@@ -74,12 +73,12 @@ func CheckToken(r *http.Request) (*TokenMetadata, error) {
 }
 
 // verifyToken verifies JWT token
-func verifyToken(r *http.Request) (*jwt.Token, error) {
+func verifyToken(r *http.Request, secret string) (*jwt.Token, error) {
 	// get the token
 	var tokenString string = extractToken(r)
 
 	// parse the JWT token
-	token, err := jwt.Parse(tokenString, jwtKeyFunc)
+	token, err := jwt.Parse(tokenString, jwtKeyFunc(secret))
 
 	// if parsing is failed, return an error
 	if err != nil {
@@ -110,6 +109,8 @@ func extractToken(r *http.Request) string {
 }
 
 // jwtKeyFunc return JWT secret key
-func jwtKeyFunc(token *jwt.Token) (interface{}, error) {
-	return []byte(os.Getenv("JWT_SECRET_KEY")), nil
+func jwtKeyFunc(secret string) func(*jwt.Token) (interface{}, error) {
+	return func(*jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	}
 }
