@@ -5,7 +5,7 @@
 ## Requirements
 1. As a user, I want to create a new user account based on the given information.
 2. As a user, I want to verify the user information. If it's correct, I will get the JWT.
-### Functional
+### Function
 1. `func CreateUser(ctx context.Context, userInfo information) (string, error)`
    - The function can create a user account and store it in the database based on `userInfo`.
    - `userInfo` contains `username`, `password`, `email`, etc.

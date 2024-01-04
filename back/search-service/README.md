@@ -5,7 +5,7 @@
 ## Requirements
 1. As a user, I want to get relevant content based on my search queries.
 2. As a user, I want to be able to find the latest content.
-### Functional
+### Function
 1. `func AutoComplete(ctx context.Context, words string) ([]string, error)`
    - The function runs when a user queries the system to find some content.
    - `words` is the textual query entered by the user in the search bar, based on which the results are found.
