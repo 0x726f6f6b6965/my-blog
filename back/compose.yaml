@@ -1,0 +1,92 @@
+services:
+  db:
+    image: postgres:16.1
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    labels:
+      - com.portto=datebase
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:7.2.3
+    restart: always
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+  blog-svc:
+    image: blog-svc:v0.0.1
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./blog-service/deployment/application.yaml:/app/application.yaml
+    # ports:
+    #   - 64532:64532
+    depends_on:
+      - db
+      - redis
+  user-svc:
+    image: user-svc:v0.0.1
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./user-service/deployment/application.yaml:/app/application.yaml
+    # ports:
+    #   - 64531:64531
+    depends_on:
+      - db
+      - redis
+  search-svc:
+    image: search-svc:v0.0.1
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./search-service/deployment/application.yaml:/app/application.yaml
+    # ports:
+    #   - 64530:64530
+    depends_on:
+      - db
+      - redis
+  graph-svc:
+    image: graph-svc:v0.0.1
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./graph-service/deployment/application.yaml:/app/application.yaml
+    ports:
+      - 8866:8866
+    depends_on:
+      - db
+      - redis
+  migrate:
+    image: migrate/migrate:v4.15.2
+    volumes:
+      - ./db/migrations/scripts:/migrations
+    entrypoint:
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable",
+      ]
+    command: ["up"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+    
