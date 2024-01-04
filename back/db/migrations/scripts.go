@@ -3,7 +3,7 @@
 // 000001_create_user.down.sql (66B)
 // 000001_create_user.up.sql (689B)
 // 000002_create_blog.down.sql (28B)
-// 000002_create_blog.up.sql (406B)
+// 000002_create_blog.up.sql (489B)
 
 package migrations
 
@@ -86,7 +86,7 @@ func _000001_create_userDownSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "000001_create_user.down.sql", size: 66, mode: os.FileMode(0644), modTime: time.Unix(1704047575, 0)}
+	info := bindataFileInfo{name: "000001_create_user.down.sql", size: 66, mode: os.FileMode(0644), modTime: time.Unix(1704171932, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xce, 0xd7, 0x5, 0x32, 0x74, 0x50, 0x2b, 0x2c, 0x88, 0xd, 0x1f, 0x66, 0x20, 0x62, 0xb4, 0x28, 0x55, 0x6f, 0xc2, 0xdd, 0x9c, 0x9, 0x3e, 0xe0, 0x79, 0x73, 0x14, 0xf2, 0xe7, 0x7d, 0x4, 0x68}}
 	return a, nil
 }
@@ -106,7 +106,7 @@ func _000001_create_userUpSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "000001_create_user.up.sql", size: 689, mode: os.FileMode(0644), modTime: time.Unix(1704047575, 0)}
+	info := bindataFileInfo{name: "000001_create_user.up.sql", size: 689, mode: os.FileMode(0644), modTime: time.Unix(1704171932, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x85, 0xc8, 0xc4, 0x25, 0xca, 0x7, 0x80, 0x53, 0x45, 0x1f, 0xb6, 0x40, 0xfd, 0x4f, 0x32, 0xdc, 0x7a, 0x35, 0x4a, 0x6c, 0x14, 0xd8, 0x0, 0xa3, 0x75, 0xc3, 0x47, 0xaf, 0x23, 0x17, 0xb7, 0x3a}}
 	return a, nil
 }
@@ -126,12 +126,12 @@ func _000002_create_blogDownSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "000002_create_blog.down.sql", size: 28, mode: os.FileMode(0644), modTime: time.Unix(1704047666, 0)}
+	info := bindataFileInfo{name: "000002_create_blog.down.sql", size: 28, mode: os.FileMode(0644), modTime: time.Unix(1704171932, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x9, 0xa3, 0xdf, 0x66, 0xab, 0x16, 0xe4, 0x53, 0x24, 0xd, 0xda, 0x8d, 0x9c, 0xa, 0x32, 0xb8, 0x83, 0xe9, 0x78, 0x6e, 0xe5, 0x40, 0x3c, 0xb4, 0x73, 0xab, 0xc5, 0x71, 0x19, 0x4, 0xe1, 0xef}}
 	return a, nil
 }
 
-var __000002_create_blogUpSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xa4\x8f\x3f\x4f\xc3\x30\x10\xc5\x77\x3e\xc5\x1b\x6d\x89\x05\x26\x54\xa6\x40\x5d\x29\x22\x04\x48\x63\x89\x4e\x96\x89\x8f\xd4\x52\xe2\x54\xce\x99\x3f\xdf\x1e\x25\x12\xc9\xd2\xad\x1e\x3c\xdc\xef\xbd\xdf\xe9\x1e\x2b\x95\xd5\x0a\x75\xf6\x50\xa8\x2b\x00\xc8\x77\x28\x5f\x6a\xa8\xf7\x7c\x5f\xef\xc1\xe6\xa3\x1b\x5a\x31\x93\xe9\x79\x07\xad\xf3\x2d\x74\x99\xbf\x69\x85\xad\xda\x65\xba\xa8\xd1\x52\x30\xd1\x06\x37\xf4\x26\x25\xef\x84\xbc\x5e\x1a\xec\xb9\x23\x34\x47\x1b\x6d\xc3\x14\xf1\x65\xe3\xaf\x0f\xad\xb8\xb9\xbd\x93\xff\x9a\x69\x61\xa9\x8b\x62\x6d\x35\x43\x60\x0a\x0c\xa6\x1f\x3e\x83\x6d\xe2\xe3\x10\x41\xbd\xf5\x9d\xb1\xce\x45\x1a\x47\x44\xfa\xa4\x48\xa1\xa1\x11\x6c\xd2\x48\x51\xcc\x5c\x9e\xd3\x47\xb2\x4c\x86\x7d\x4f\x98\xbe\x91\x6d\x7f\x5a\x72\xcb\x59\x22\x0c\xdf\x42\x4a\x6c\x36\x6b\x6a\x95\xa4\x93\xbb\x5c\xf2\x5a\xe5\xcf\x59\x75\xc0\x93\x3a\x08\xef\xe4\x3c\x97\xf7\x7f\x01\x00\x00\xff\xff\x4a\xca\xe3\x6e\x96\x01\x00\x00")
+var __000002_create_blogUpSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xa4\x91\xb1\x6e\xf2\x30\x14\x85\x77\x9e\xe2\x8c\xb6\xc4\xf2\xff\x53\x05\x53\x5a\x8c\x64\x35\x0d\x2d\xc4\x12\x4c\x96\x1b\xdf\x06\x4b\xc4\x46\xce\x4d\x4b\xdf\xbe\x82\x52\xe8\xc0\x56\x0f\x1e\x7c\xee\xfd\xac\xa3\xef\x61\xa9\x8a\x5a\xa1\x2e\xee\x4b\x35\x02\x00\x3d\x47\xb5\xa8\xa1\xd6\x7a\x55\xaf\xc0\xf6\x75\x97\x5a\x71\x4a\x8e\x27\x78\x18\xa3\x67\x30\x95\x7e\x31\x0a\x33\x35\x2f\x4c\x59\xa3\xa5\x68\xb3\x8b\x3e\x75\x76\x18\x82\x17\x72\x7c\xd9\xe0\xc0\x3b\x42\xb3\x75\xd9\x35\x4c\x19\xef\x2e\x7f\x86\xd8\x8a\x7f\xff\xef\xe4\x0f\xe6\xf8\x61\x65\xca\xf2\xba\xd5\xa4\xc8\x14\x19\x4c\x07\xbe\x11\xbb\x81\xb7\x29\x83\x3a\x17\x76\xd6\x79\x9f\xa9\xef\x91\xe9\x8d\x32\xc5\x86\x7a\xb0\x1d\x7a\xca\xe2\x94\xcb\x5b\xf8\x4c\x8e\xc9\x72\xe8\x08\xc7\xab\x67\xd7\xed\x2f\x73\x97\x5a\x22\xa6\x0f\x21\x25\x26\x93\xeb\xd4\x15\x32\xec\xfd\xdf\x21\xcf\x4b\xfd\x54\x2c\x37\x78\x54\x1b\x11\xbc\x3c\xbd\xcb\xe9\x68\x74\xf6\xa2\xab\x99\x5a\xdf\xf0\x12\xfc\xc1\x7e\xbb\xb1\x7b\xd7\x86\xe8\x38\xa4\x88\x45\x75\x16\x06\xf1\xab\xe1\x18\xc1\xcb\xe9\x57\x00\x00\x00\xff\xff\x39\x89\x19\x50\xe9\x01\x00\x00")
 
 func _000002_create_blogUpSqlBytes() ([]byte, error) {
 	return bindataRead(
@@ -146,8 +146,8 @@ func _000002_create_blogUpSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "000002_create_blog.up.sql", size: 406, mode: os.FileMode(0644), modTime: time.Unix(1704047660, 0)}
-	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x2b, 0x67, 0x38, 0xf2, 0x99, 0xaa, 0x47, 0xad, 0x85, 0x10, 0x13, 0x83, 0xed, 0xad, 0xd2, 0x4d, 0x4, 0x82, 0x57, 0x77, 0xbb, 0x6c, 0x80, 0x77, 0x93, 0xf7, 0xe6, 0x51, 0x64, 0x61, 0xb2, 0x34}}
+	info := bindataFileInfo{name: "000002_create_blog.up.sql", size: 489, mode: os.FileMode(0644), modTime: time.Unix(1704351697, 0)}
+	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x7c, 0xb6, 0xcb, 0x25, 0x12, 0xf0, 0x5f, 0x2b, 0x9c, 0x50, 0xb, 0x9a, 0x94, 0xf, 0xae, 0xc1, 0x9c, 0x95, 0xb9, 0x14, 0x41, 0x69, 0xfd, 0x9, 0xda, 0x40, 0xff, 0xa7, 0x9c, 0xa7, 0xf6, 0x84}}
 	return a, nil
 }
 

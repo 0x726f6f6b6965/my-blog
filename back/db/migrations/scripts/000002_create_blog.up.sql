@@ -8,3 +8,6 @@ CREATE TABLE
         update_time timestamp NOT NULL DEFAULT (now()) :: timestamp,
         PRIMARY KEY(id)
     );
+
+CREATE INDEX
+    IF NOT EXISTS idx_t_blog_pagination ON t_blog (create_time, id);

@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package blog.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+option go_package = "github.com/0x726f6f6b6965/my-blog/protos/blog/v1;v1";
+
+service BlogService {
+    // CreateBlog: create blog
+    rpc CreateBlog (CreateBlogRequest) returns (Blog);
+    // EditBlog: edit exist blog
+    rpc EditBlog (EditBlogRequest) returns (Blog);
+    // GetBlog: get blog information
+    rpc GetBlog (GetBlogRequest) returns (Blog);
+    // GetBlogList: get blog list
+    rpc GetBlogList (GetBlogListRequest) returns (GetBlogListResponse);
+    // DeleteBlog: delete specific blog
+    rpc DeleteBlog (DeleteBlogRequest) returns (google.protobuf.Empty);
+}
+
+message CreateBlogRequest {
+    string title = 1;
+    string content = 2;
+    string author = 3;
+}
+
+message EditBlogRequest {
+    string id = 1;
+    Blog blog = 2;
+    google.protobuf.FieldMask update_mask = 3;
+}
+
+message GetBlogRequest {
+    string id = 1;
+}
+
+message DeleteBlogRequest {
+    string id = 1;
+    string author = 2;
+}
+
+message GetBlogListRequest {
+    int32 page_size = 1;
+    string page_token = 2;
+    repeated string authors = 3;
+}
+
+message GetBlogListResponse {
+    repeated Blog blog = 1;
+    string next_token = 2;
+}
+
+message Blog {
+    string id = 1;
+    string title = 2;
+    string content = 3;
+    string author = 4;
+    google.protobuf.Timestamp create_time = 5;
+    google.protobuf.Timestamp update_time = 6;
+}
