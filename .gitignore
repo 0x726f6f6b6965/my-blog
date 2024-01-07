@@ -1,1 +1,8 @@
 .env
+infra/demo
+infra/demo.pub
+.terraform
+infra/terraform.tfstate
+.gitignore
+infra/.terraform.lock.hcl
+infra/terraform.tfstate.backup
