@@ -74,6 +74,7 @@ services:
       - redis
   migrate:
     image: migrate/migrate:v4.15.2
+    profiles: ["tools"]
     volumes:
       - ./db/migrations/scripts:/migrations
     entrypoint:
