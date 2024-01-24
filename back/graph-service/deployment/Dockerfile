@@ -1,4 +1,4 @@
-FROM golang:1.21.5
+FROM golang:1.21.5 AS build-stage
 
 WORKDIR /app/project
 
@@ -11,5 +11,11 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./graph-service/api/server.go
 WORKDIR /app
 
 RUN  rm -rf ./project
+
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
+
+WORKDIR /
+
+COPY --from=build-stage /server /server
 
 CMD ["/server"]
