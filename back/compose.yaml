@@ -24,6 +24,11 @@ services:
       - ${REDIS_PORT}:${REDIS_PORT}
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   blog-svc:
     image: blog-svc:v0.0.1
     restart: always
@@ -34,8 +39,10 @@ services:
     # ports:
     #   - 64532:64532
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   user-svc:
     image: user-svc:v0.0.1
     restart: always
@@ -46,8 +53,10 @@ services:
     # ports:
     #   - 64531:64531
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   search-svc:
     image: search-svc:v0.0.1
     restart: always
@@ -58,8 +67,10 @@ services:
     # ports:
     #   - 64530:64530
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   graph-svc:
     image: graph-svc:v0.0.1
     restart: always
@@ -70,8 +81,10 @@ services:
     ports:
       - 8866:8866
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   migrate:
     image: migrate/migrate:v4.15.2
     profiles: ["tools"]
@@ -90,4 +103,3 @@ services:
       db:
         condition: service_healthy
     restart: on-failure
-    

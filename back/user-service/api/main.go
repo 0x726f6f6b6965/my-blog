@@ -1,16 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
 
+	"github.com/0x726f6f6b6965/my-blog/lib/checker"
 	"github.com/0x726f6f6b6965/my-blog/lib/logger"
 	pbUser "github.com/0x726f6f6b6965/my-blog/protos/user/v1"
 
 	"github.com/0x726f6f6b6965/my-blog/user-service/internal/client"
 	"github.com/0x726f6f6b6965/my-blog/user-service/internal/config"
+	"github.com/0x726f6f6b6965/my-blog/user-service/internal/helper"
 	"github.com/0x726f6f6b6965/my-blog/user-service/internal/services"
 
 	"github.com/joho/godotenv"
@@ -49,6 +52,15 @@ func main() {
 
 	rds := client.InitRedisClient(&cfg.Redis)
 	defer rds.Close()
+	//Init secret
+	if secret, _ := client.GetSecret(context.Background(), rds); checker.IsEmpty(secret) {
+		err = client.SetSecret(context.Background(), helper.GetRandString(), -1, rds)
+		if err != nil {
+			zaplog.Error("failed to set secret", zap.Error(err))
+			return
+		}
+	}
+
 	server := services.NewUserService(cfg.Expire, db, rds)
 	grpcServer := grpc.NewServer()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Grpc.Port))

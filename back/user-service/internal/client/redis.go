@@ -38,3 +38,7 @@ func GetSecret(ctx context.Context, rds *redis.Client) (string, error) {
 func SetToken(ctx context.Context, email string, token string, expire time.Duration, rds *redis.Client) error {
 	return rds.Set(ctx, fmt.Sprintf(UserToken, email), token, expire).Err()
 }
+
+func SetSecret(ctx context.Context, val string, expire time.Duration, rds *redis.Client) error {
+	return rds.Set(ctx, Secret, val, expire).Err()
+}
